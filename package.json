@@ -1,0 +1,12 @@
+{
+  "name": "snakes_3d",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:alloystory/snakes_3d.git",
+  "author": "aloysius <alloystory@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.6.0"
+  }
+}
