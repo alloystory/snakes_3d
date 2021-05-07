@@ -1,30 +1,32 @@
-import { PerspectiveCamera, Scene, WebGLRenderer } from 'three'
-import camera from './camera'
-import floor from './floor'
-import renderer from './renderer'
-import scene from './scene'
-import snake from './snake'
+import { PerspectiveCamera, Scene as ThreeScene, WebGLRenderer } from 'three'
+import Animator from './Animator'
+import Camera from './Camera'
+import Floor from './Floor'
+import Renderer from './Renderer'
+import Scene from './Scene'
+import Snake from './Snake'
 
 export default class World {
-  private scene: Scene
+  private scene: ThreeScene
   private camera: PerspectiveCamera
   private renderer: WebGLRenderer
 
   constructor(container: HTMLElement) {
     const { clientWidth, clientHeight } = container
-    this.scene = scene.create()
-    this.camera = camera.create(clientWidth, clientHeight)
-    this.renderer = renderer.create(clientWidth, clientHeight)
+    this.scene = Scene.create()
+    this.camera = Camera.create(clientWidth, clientHeight)
+    this.renderer = Renderer.create(clientWidth, clientHeight)
 
     // Add renderer.
     container.append(this.renderer.domElement)
 
     // Add Objects.
-    this.scene.add(...[snake.create(), floor.create()])
+    this.scene.add(...[Snake.create(), Floor.create()])
   }
 
   render() {
     this.renderer.setAnimationLoop(() => {
+      Animator.animate(this.scene, this.camera)
       this.renderer.render(this.scene, this.camera)
     })
   }
