@@ -5,7 +5,12 @@
   "repository": "git@github.com:alloystory/snakes_3d.git",
   "author": "aloysius <alloystory@gmail.com>",
   "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "three": "^0.128.0"
+  },
   "devDependencies": {
+    "@types/lodash": "^4.14.169",
     "@types/three": "^0.127.1",
     "css-loader": "^5.2.4",
     "html-webpack-plugin": "^5.3.1",
@@ -20,8 +25,5 @@
   "scripts": {
     "build": "yarn webpack",
     "start": "yarn webpack serve"
-  },
-  "dependencies": {
-    "three": "^0.128.0"
   }
 }
