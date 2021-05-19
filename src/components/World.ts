@@ -4,10 +4,10 @@ import Animator from './Animator'
 import Camera from './Camera'
 import CameraOrbitor from './CameraOrbitor'
 import Floor from './Floor'
+import Light from './Light'
 import Renderer from './Renderer'
 import Scene from './Scene'
 import Snake from './Snake'
-import Light from './Light'
 
 export default class World {
   private scene: ThreeScene

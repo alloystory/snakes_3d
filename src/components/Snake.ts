@@ -1,4 +1,4 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial } from 'three'
+import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
 
 const NAME = 'snake'
 

@@ -1,4 +1,4 @@
-import { Color, Mesh, MeshNormalMaterial, MeshStandardMaterial, PlaneGeometry } from 'three'
+import { Color, Mesh, MeshStandardMaterial, PlaneGeometry } from 'three'
 
 const NAME = 'floor'
 
