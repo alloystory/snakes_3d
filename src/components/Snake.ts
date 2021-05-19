@@ -1,4 +1,4 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial } from 'three'
+import { BoxGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial } from 'three'
 
 const NAME = 'snake'
 
@@ -10,7 +10,7 @@ function create() {
   // Translate to ensure that anchor point is on the left face of the cube.
   snakeGeometry.translate(width / 2, 0, 0)
 
-  const snakeMaterial = new MeshBasicMaterial()
+  const snakeMaterial = new MeshStandardMaterial()
 
   const snake = new Mesh(snakeGeometry, snakeMaterial)
   snake.position.x -= width / 2

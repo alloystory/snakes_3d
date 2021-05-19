@@ -7,6 +7,7 @@ import Floor from './Floor'
 import Renderer from './Renderer'
 import Scene from './Scene'
 import Snake from './Snake'
+import Light from './Light'
 
 export default class World {
   private scene: ThreeScene
@@ -22,7 +23,7 @@ export default class World {
 
     container.append(this.renderer.domElement)
     this.orbitor = CameraOrbitor.create(this.camera, container)
-    this.scene.add(...[Snake.create(), Floor.create()])
+    this.scene.add(...[Snake.create(), Floor.create(), Light.create()])
   }
 
   render() {
