@@ -1,6 +1,6 @@
 import { PerspectiveCamera } from 'three'
 
-function create(width: number, height: number) {
+export default function Camera(width: number, height: number) {
   const fov = 75
   const aspectRatio = width / height
   const near = 0.1
@@ -10,8 +10,6 @@ function create(width: number, height: number) {
 
   // Set initial position to a z-index > 0, otherwise no objects
   // in the scene can be seen.
-  camera.position.set(0, 0, 15)
+  camera.position.set(0, 0, 16)
   return camera
 }
-
-export default { create }

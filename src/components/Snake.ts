@@ -1,22 +1,20 @@
 import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
 
-const NAME = 'snake'
+export const NAME = 'snake'
+export const WIDTH = 2
+export const HEIGHT = 1
+export const DEPTH = 1
 
-function create() {
-  const width = 2
-  const height = 1
-  const depth = 1
-  const snakeGeometry = new BoxGeometry(width, height, depth)
-  // Translate to ensure that anchor point is on the left face of the cube.
-  snakeGeometry.translate(width / 2, 0, 0)
+export default function Snake() {
+  const snakeGeometry = new BoxGeometry(WIDTH, HEIGHT, DEPTH)
+  // // Translate to ensure that anchor point is on the left face of the cube.
+  // snakeGeometry.translate(WIDTH / 2, 0, 0)
 
   const snakeMaterial = new MeshStandardMaterial()
 
   const snake = new Mesh(snakeGeometry, snakeMaterial)
-  snake.position.x -= width / 2
-  snake.position.z += width / 2
+  // snake.position.x -= WIDTH / 2
+  // snake.position.z += WIDTH / 2
   snake.name = NAME
   return snake
 }
-
-export default { create, NAME }

@@ -1,17 +1,15 @@
 import _ from 'lodash'
 import { Object3D, Scene } from 'three'
-import Snake from './Snake'
+import { NAME } from './Snake'
 
-const snakeMover = _.throttle((snake: Object3D) => {
-  snake.position.x -= 1
-}, 1000)
+// const snakeMover = _.throttle((snake: Object3D) => {
+//   snake.position.x -= 1
+// }, 1000)
 
-function animate(scene: Scene) {
-  const snake = scene.getObjectByName(Snake.NAME)
+export function startAnimation(scene: Scene) {
+  const snake = scene.getObjectByName(NAME)
   if (!snake) {
     throw new Error('Missing snake')
   }
-  snakeMover(snake)
+  // snakeMover(snake)
 }
-
-export default { animate }

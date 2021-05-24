@@ -1,6 +1,6 @@
 import { Color, SpotLight } from 'three'
 
-function create() {
+export default function Light() {
   const lightColor = new Color('white')
   const lightIntensity = 1
   const maxLightDistance = 60
@@ -10,5 +10,3 @@ function create() {
 
   return light
 }
-
-export default { create }
