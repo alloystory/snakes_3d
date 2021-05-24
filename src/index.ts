@@ -1,6 +1,6 @@
-import World from './components/World'
+import Game from './components/Game'
 import './style.css'
 
 const container = document.body
-const world = new World(container)
-world.render()
+const game = new Game(container)
+game.render()

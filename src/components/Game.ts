@@ -9,7 +9,7 @@ import Renderer from './Renderer'
 import Scene from './Scene'
 import Snake from './Snake'
 
-export default class World {
+export default class Game {
   private scene: ThreeScene
   private camera: PerspectiveCamera
   private renderer: WebGLRenderer
