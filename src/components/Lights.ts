@@ -1,29 +1,24 @@
 import _ from 'lodash'
-import { Color, DirectionalLight, PointLight, SpotLight } from 'three'
+import { AmbientLight, Color, DirectionalLight, Object3D, PointLight, SpotLight } from 'three'
 import { WORLD_INFO } from './World'
 
 const LIGHT_COLOR = new Color('white')
 
-export default function Lights() {
+export default function Lights(snake: Object3D) {
   const ceilingLights = getCeilingLights()
-  const cameraLight = getCameraLight()
-
-  return ceilingLights
-}
-
-function getCameraLight() {
-  const lightIntensity = 0.4
-  const light = new DirectionalLight(LIGHT_COLOR, lightIntensity)
-  light.position.set(0, -1, 1)
-  return light
+  const directionalLight = new DirectionalLight(LIGHT_COLOR, 0.3)
+  directionalLight.position.set(0, 1, 1)
+  directionalLight.castShadow = true
+  directionalLight.target = snake
+  return [ceilingLights, directionalLight]
 }
 
 function getCeilingLights() {
-  const lightIntensity = 0.1
-  const maxLightDistance = 60
+  const lightIntensity = 0.2
+  const maxLightDistance = WORLD_INFO.height * 1.5
 
-  const numCeilingLightsInRow = 4
-  const numCeilingLightsInCol = 4
+  const numCeilingLightsInRow = 3
+  const numCeilingLightsInCol = 3
   const ceilingLightPositions = getCeilingLightPositions(numCeilingLightsInRow, numCeilingLightsInCol)
 
   return ceilingLightPositions.map((position) => {
@@ -52,7 +47,12 @@ function getCeilingLightPositions(numLightsOnWidth: number, numLightsOnDepth: nu
   const positions: { x: number; y: number; z: number }[] = []
   for (const widthPosition of widthPositions) {
     for (const depthPosition of depthPositions) {
-      positions.push({ x: widthPosition, y: WORLD_INFO.height / 2, z: depthPosition })
+      positions.push({
+        x: widthPosition,
+        // Translated slightly below the ceiling to give ceiling some light.
+        y: WORLD_INFO.height / 4,
+        z: depthPosition,
+      })
     }
   }
 

@@ -17,7 +17,10 @@ export function startGame(container: HTMLElement) {
 
   container.append(renderer.domElement)
 
-  const components = flattenDeep<Object3D>([World(), Snake(), Lights()])
+  const worldComponent = World()
+  const snakeComponent = Snake()
+  const lightComponents = Lights(snakeComponent)
+  const components = flattenDeep<Object3D>([worldComponent, snakeComponent, lightComponents])
   scene.add(...components)
 
   renderer.setAnimationLoop(() => {
