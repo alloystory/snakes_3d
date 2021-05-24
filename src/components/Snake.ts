@@ -1,7 +1,8 @@
 import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
+import { ComponentInfo } from '../types'
 import { WORLD_INFO } from './World'
 
-export const SNAKE_INFO = {
+export const SNAKE_INFO: ComponentInfo = {
   name: 'snake',
   width: 1,
   height: 1,

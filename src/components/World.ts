@@ -1,6 +1,7 @@
 import { BackSide, BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
+import { ComponentInfo } from '../types'
 
-export const WORLD_INFO = {
+export const WORLD_INFO: ComponentInfo = {
   name: 'world',
   width: 32,
   height: 24,
