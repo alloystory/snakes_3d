@@ -1,4 +1,5 @@
 import { PerspectiveCamera } from 'three'
+import { WORLD_INFO } from './World'
 
 export default function Camera(width: number, height: number) {
   const fov = 75
@@ -7,9 +8,6 @@ export default function Camera(width: number, height: number) {
   const far = 1000
 
   const camera = new PerspectiveCamera(fov, aspectRatio, near, far)
-
-  // Set initial position to a z-index > 0, otherwise no objects
-  // in the scene can be seen.
-  camera.position.set(0, 0, 16)
+  camera.position.z = WORLD_INFO.depth / 2
   return camera
 }

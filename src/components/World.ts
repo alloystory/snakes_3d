@@ -1,17 +1,18 @@
 import { BackSide, BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
 
-export const NAME = 'world'
-export const WIDTH = 32
-export const HEIGHT = 24
-export const DEPTH = 32
+export const WORLD_INFO = {
+  name: 'world',
+  width: 32,
+  height: 24,
+  depth: 32,
+}
 
 export default function World() {
-  const worldGeometry = new BoxGeometry(WIDTH, HEIGHT, DEPTH)
+  const worldGeometry = new BoxGeometry(WORLD_INFO.width, WORLD_INFO.height, WORLD_INFO.depth)
   const worldMaterial = new MeshStandardMaterial()
   worldMaterial.side = BackSide
 
   const world = new Mesh(worldGeometry, worldMaterial)
-  world.position.y += 12
-  world.name = NAME
+  world.name = WORLD_INFO.name
   return world
 }

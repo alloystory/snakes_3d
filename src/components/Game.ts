@@ -1,7 +1,7 @@
 import { Scene } from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { startAnimation } from './Animator'
 import Camera from './Camera'
-import CameraOrbitor from './CameraOrbitor'
 import Light from './Light'
 import Renderer from './Renderer'
 import Snake from './Snake'
@@ -12,9 +12,9 @@ export function startGame(container: HTMLElement) {
   const scene = new Scene()
   const camera = Camera(clientWidth, clientHeight)
   const renderer = Renderer(clientWidth, clientHeight)
+  const orbitor = new OrbitControls(camera, container)
 
   container.append(renderer.domElement)
-  const orbitor = CameraOrbitor(camera, container)
   scene.add(...[World(), Snake(), Light()])
 
   renderer.setAnimationLoop(() => {
