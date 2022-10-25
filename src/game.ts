@@ -45,8 +45,8 @@ export function startGame(container: HTMLElement): void {
   const orbitor = new OrbitControls(camera, container)
 
   // Initialize the entities of the game.
-  const worldEntity = getWorld()
-  const snakeEntity = getSnake()
+  const worldEntity = getWorldEntity()
+  const snakeEntity = getSnakeEntity()
   const lightEntities = getLights(snakeEntity)
   const entities = flattenDeep<Object3D>([worldEntity, snakeEntity, lightEntities])
   scene.add(...entities)
@@ -66,21 +66,10 @@ const snakeMover = _.throttle((snake: Object3D) => {
 
 function startAnimation(scene: Scene): void {
   const snake = scene.getObjectByName(SNAKE_INFO.name)
-  if (!snake) {
+  if (snake == null) {
     throw new Error('Missing snake')
   }
   snakeMover(snake)
-}
-
-function getCamera(width: number, height: number): Camera {
-  const fov = 75
-  const aspectRatio = width / height
-  const near = 0.1
-  const far = 1000
-
-  const camera = new PerspectiveCamera(fov, aspectRatio, near, far)
-  camera.position.z = WORLD_INFO.depth / 2
-  return camera
 }
 
 function getRenderer(width: number, height: number): WebGLRenderer {
@@ -89,19 +78,33 @@ function getRenderer(width: number, height: number): WebGLRenderer {
   return renderer
 }
 
-function getSnake(): Mesh {
-  const snakeGeometry = new BoxGeometry(SNAKE_INFO.width, SNAKE_INFO.height, SNAKE_INFO.depth)
-  const snakeMaterial = new MeshStandardMaterial()
-  const snake = new Mesh(snakeGeometry, snakeMaterial)
+function getCamera(width: number, height: number): Camera {
+  const fov = 75
+  const aspectRatio = width / height
 
-  // Ensure that the snake is on the floor of the world.
-  snake.position.y = -WORLD_INFO.height / 2 + SNAKE_INFO.height / 2
-  snake.name = SNAKE_INFO.name
-  return snake
+  // Objects that are outside of 'near' and 'far' distances will not be rendered.
+  // TODO: Update this for performance gains.
+  const near = 0.1
+  const far = 1000
+
+  const camera = new PerspectiveCamera(fov, aspectRatio, near, far)
+  camera.position.z = WORLD_INFO.depth / 2
+  return camera
 }
 
-function getWorld(): Mesh {
-  const worldGeometry = new BoxGeometry(WORLD_INFO.width, WORLD_INFO.height, WORLD_INFO.depth)
+function getSnakeEntity(): Mesh {
+  const geometry = new BoxGeometry(SNAKE_INFO.width, SNAKE_INFO.height, SNAKE_INFO.depth)
+  const material = new MeshStandardMaterial()
+  const entity = new Mesh(geometry, material)
+
+  // Ensure that the snake is on the floor of the world.
+  entity.position.y = -WORLD_INFO.height / 2 + SNAKE_INFO.height / 2
+  entity.name = SNAKE_INFO.name
+  return entity
+}
+
+function getWorldEntity(): Mesh {
+  const geometry = new BoxGeometry(WORLD_INFO.width, WORLD_INFO.height, WORLD_INFO.depth)
 
   const ceilingMaterial = new MeshStandardMaterial({ color: new Color('white') })
   const wallMaterial = new MeshStandardMaterial({ color: new Color('salmon') })
@@ -113,7 +116,7 @@ function getWorld(): Mesh {
   const worldOuterMaterial = wallMaterial
   const worldTopMaterial = ceilingMaterial
   const worldBottomMaterial = floorMaterial
-  const worldMaterials = [
+  const materials = [
     worldRightMaterial,
     worldLeftMaterial,
     worldTopMaterial,
@@ -122,12 +125,12 @@ function getWorld(): Mesh {
     worldInnerMaterial,
   ]
 
-  worldMaterials.forEach((material) => {
+  materials.forEach((material) => {
     // Only render the inner faces of the cube.
     material.side = BackSide
   })
 
-  const world = new Mesh(worldGeometry, worldMaterials)
+  const world = new Mesh(geometry, materials)
   world.name = WORLD_INFO.name
   return world
 }
