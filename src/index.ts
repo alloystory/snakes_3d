@@ -1,4 +1,4 @@
-import { startGame } from './components/Game'
+import { startGame } from './game'
 import './style.css'
 
 const container = document.body
