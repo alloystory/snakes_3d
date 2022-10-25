@@ -1,10 +1,11 @@
-import _ from 'lodash'
-import { flattenDeep } from 'lodash'
+import _, { flattenDeep } from 'lodash'
 import {
   BackSide,
   BoxGeometry,
+  Camera,
   Color,
   DirectionalLight,
+  Light,
   Mesh,
   MeshStandardMaterial,
   Object3D,
@@ -31,21 +32,26 @@ const SNAKE_INFO = {
 
 const LIGHT_COLOR = new Color('white')
 
-export function startGame(container: HTMLElement) {
+export function startGame(container: HTMLElement): void {
   const { clientWidth, clientHeight } = container
+
+  // Initialize the base components for the game.
   const scene = new Scene()
   const camera = getCamera(clientWidth, clientHeight)
   const renderer = getRenderer(clientWidth, clientHeight)
-  const orbitor = new OrbitControls(camera, container)
-
   container.append(renderer.domElement)
 
-  const worldComponent = getWorld()
-  const snakeComponent = getSnake()
-  const lightComponents = getLights(snakeComponent)
-  const components = flattenDeep<Object3D>([worldComponent, snakeComponent, lightComponents])
-  scene.add(...components)
+  // Add an OrbitControls to enable camera movements by dragging.
+  const orbitor = new OrbitControls(camera, container)
 
+  // Initialize the entities of the game.
+  const worldEntity = getWorld()
+  const snakeEntity = getSnake()
+  const lightEntities = getLights(snakeEntity)
+  const entities = flattenDeep<Object3D>([worldEntity, snakeEntity, lightEntities])
+  scene.add(...entities)
+
+  // Start the game. The callback will run on every available frame.
   renderer.setAnimationLoop(() => {
     startAnimation(scene)
     orbitor.update()
@@ -58,7 +64,7 @@ const snakeMover = _.throttle((snake: Object3D) => {
   snake.position.z = Math.random() * WORLD_INFO.depth - WORLD_INFO.depth / 2
 }, 3000)
 
-function startAnimation(scene: Scene) {
+function startAnimation(scene: Scene): void {
   const snake = scene.getObjectByName(SNAKE_INFO.name)
   if (!snake) {
     throw new Error('Missing snake')
@@ -66,7 +72,7 @@ function startAnimation(scene: Scene) {
   snakeMover(snake)
 }
 
-function getCamera(width: number, height: number): PerspectiveCamera {
+function getCamera(width: number, height: number): Camera {
   const fov = 75
   const aspectRatio = width / height
   const near = 0.1
@@ -77,13 +83,13 @@ function getCamera(width: number, height: number): PerspectiveCamera {
   return camera
 }
 
-function getRenderer(width: number, height: number) {
+function getRenderer(width: number, height: number): WebGLRenderer {
   const renderer = new WebGLRenderer({ antialias: true })
   renderer.setSize(width, height)
   return renderer
 }
 
-function getSnake() {
+function getSnake(): Mesh {
   const snakeGeometry = new BoxGeometry(SNAKE_INFO.width, SNAKE_INFO.height, SNAKE_INFO.depth)
   const snakeMaterial = new MeshStandardMaterial()
   const snake = new Mesh(snakeGeometry, snakeMaterial)
@@ -94,7 +100,7 @@ function getSnake() {
   return snake
 }
 
-function getWorld() {
+function getWorld(): Mesh {
   const worldGeometry = new BoxGeometry(WORLD_INFO.width, WORLD_INFO.height, WORLD_INFO.depth)
 
   const ceilingMaterial = new MeshStandardMaterial({ color: new Color('white') })
@@ -126,16 +132,16 @@ function getWorld() {
   return world
 }
 
-function getLights(snake: Object3D) {
+function getLights(snake: Object3D): Light[] {
   const ceilingLights = getCeilingLights()
   const directionalLight = new DirectionalLight(LIGHT_COLOR, 0.3)
   directionalLight.position.set(0, 1, 1)
   directionalLight.castShadow = true
   directionalLight.target = snake
-  return [ceilingLights, directionalLight]
+  return ceilingLights.concat([directionalLight])
 }
 
-function getCeilingLights() {
+function getCeilingLights(): Light[] {
   const lightIntensity = 0.2
   const maxLightDistance = WORLD_INFO.height * 1.5
 
@@ -153,7 +159,9 @@ function getCeilingLights() {
   })
 }
 
-function getCeilingLightPositions(numLightsOnWidth: number, numLightsOnDepth: number) {
+type Coordinates = { x: number; y: number; z: number }
+
+function getCeilingLightPositions(numLightsOnWidth: number, numLightsOnDepth: number): Coordinates[] {
   // Spread coordinates equally across the range.
   const widthPositions = _.range(
     -WORLD_INFO.width / 2,
@@ -166,7 +174,7 @@ function getCeilingLightPositions(numLightsOnWidth: number, numLightsOnDepth: nu
     WORLD_INFO.depth / (numLightsOnDepth + 1)
   ).slice(1, -1)
 
-  const positions: { x: number; y: number; z: number }[] = []
+  const positions: Coordinates[] = []
   for (const widthPosition of widthPositions) {
     for (const depthPosition of depthPositions) {
       positions.push({
