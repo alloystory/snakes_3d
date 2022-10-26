@@ -1,10 +1,11 @@
 import _, { flattenDeep } from 'lodash'
-import {
+import THREE, {
   BackSide,
   BoxGeometry,
   Camera,
   Color,
   DirectionalLight,
+  Group,
   Light,
   Mesh,
   MeshStandardMaterial,
@@ -32,6 +33,8 @@ const SNAKE_INFO = {
 
 const LIGHT_COLOR = new Color('white')
 
+let currentScore = 0
+
 export function startGame(container: HTMLElement): void {
   const { clientWidth, clientHeight } = container
 
@@ -42,19 +45,19 @@ export function startGame(container: HTMLElement): void {
   container.append(renderer.domElement)
 
   // Add an OrbitControls to enable camera movements by dragging.
-  const orbitor = new OrbitControls(camera, container)
+  // const orbitor = new OrbitControls(camera, container)
 
   // Initialize the entities of the game.
   const worldEntity = getWorldEntity()
-  const snakeEntity = getSnakeEntity()
-  const lightEntities = getLights(snakeEntity)
-  const entities = flattenDeep<Object3D>([worldEntity, snakeEntity, lightEntities])
+  const snakeEntities = getSnakeEntity()
+  const lightEntities = getLights()
+  const entities = flattenDeep<Object3D>([worldEntity, snakeEntities, lightEntities])
   scene.add(...entities)
 
   // Start the game. The callback will run on every available frame.
   renderer.setAnimationLoop(() => {
     startAnimation(scene)
-    orbitor.update()
+    // orbitor.update()
     renderer.render(scene, camera)
   })
 }
@@ -64,12 +67,26 @@ const snakeMover = _.throttle((snake: Object3D) => {
   snake.position.z = Math.random() * WORLD_INFO.depth - WORLD_INFO.depth / 2
 }, 3000)
 
-function startAnimation(scene: Scene): void {
-  const snake = scene.getObjectByName(SNAKE_INFO.name)
-  if (snake == null) {
-    throw new Error('Missing snake')
+const snakeExtender = _.throttle((scene: Scene) => {
+  const snakeEntity = scene.getObjectByName('snake')
+  if (!snakeEntity) return
+
+  currentScore++
+  const newSegment = getSnakeSegmentEntity(currentScore)
+  const prevSegment = snakeEntity.getObjectByName(`snake-${currentScore - 1}`)
+  if (prevSegment) {
+    newSegment.position.z = prevSegment.position.z + 1
   }
-  snakeMover(snake)
+  snakeEntity.add(newSegment)
+}, 1000)
+
+function startAnimation(scene: Scene): void {
+  // const snake = scene.getObjectByName(SNAKE_INFO.name)
+  // if (snake == null) {
+  //   throw new Error('Missing snake')
+  // }
+  // snakeMover(snake)
+  snakeExtender(scene)
 }
 
 function getRenderer(width: number, height: number): WebGLRenderer {
@@ -88,18 +105,40 @@ function getCamera(width: number, height: number): Camera {
   const far = 1000
 
   const camera = new PerspectiveCamera(fov, aspectRatio, near, far)
+  // camera.position.y = -WORLD_INFO.height / 2
   camera.position.z = WORLD_INFO.depth / 2
+  camera.lookAt(0, -WORLD_INFO.height / 2, 0) // Temp edit to lock the camera at the snake.
   return camera
 }
 
-function getSnakeEntity(): Mesh {
-  const geometry = new BoxGeometry(SNAKE_INFO.width, SNAKE_INFO.height, SNAKE_INFO.depth)
-  const material = new MeshStandardMaterial()
+function getSnakeEntity(): Object3D {
+  const numSegments = currentScore + 1
+  const snakeEntity = new Group()
+  for (let i = 0; i < numSegments; i++) {
+    const segment = getSnakeSegmentEntity(i)
+    if (i > 0) {
+      const prevSegment = snakeEntity.getObjectByName(`snake-${i - 1}`)
+      if (prevSegment) {
+        segment.position.z = prevSegment.position.z + 1
+      }
+    }
+    snakeEntity.add(segment)
+  }
+  snakeEntity.name = 'snake'
+  return snakeEntity
+}
+
+function getSnakeSegmentEntity(id: number): Mesh {
+  const width = 1
+  const height = 1
+  const depth = 1
+  const geometry = new BoxGeometry(width, height, depth)
+  const material = new MeshStandardMaterial({ color: new Color('aqua') })
   const entity = new Mesh(geometry, material)
 
   // Ensure that the snake is on the floor of the world.
   entity.position.y = -WORLD_INFO.height / 2 + SNAKE_INFO.height / 2
-  entity.name = SNAKE_INFO.name
+  entity.name = `snake-${id}`
   return entity
 }
 
@@ -135,13 +174,14 @@ function getWorldEntity(): Mesh {
   return world
 }
 
-function getLights(snake: Object3D): Light[] {
+function getLights(): Light[] {
   const ceilingLights = getCeilingLights()
-  const directionalLight = new DirectionalLight(LIGHT_COLOR, 0.3)
-  directionalLight.position.set(0, 1, 1)
-  directionalLight.castShadow = true
-  directionalLight.target = snake
-  return ceilingLights.concat([directionalLight])
+  return ceilingLights
+  // const directionalLight = new DirectionalLight(LIGHT_COLOR, 0.3)
+  // directionalLight.position.set(0, 1, 1)
+  // directionalLight.castShadow = true
+  // directionalLight.target = snake
+  // return ceilingLights.concat([directionalLight])
 }
 
 function getCeilingLights(): Light[] {
