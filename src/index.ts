@@ -1,5 +1,9 @@
+import SnekGame from './components/SnekGame'
 import { startGame } from './game'
 import './style.css'
 
 const container = document.body
-startGame(container)
+const game = new SnekGame(container)
+game.start()
+
+// startGame(container)
