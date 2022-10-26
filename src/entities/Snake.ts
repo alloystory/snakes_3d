@@ -18,10 +18,25 @@ class Snake {
     return this.segments
   }
 
+  getNumSegments(): number {
+    return this.segments.children.length
+  }
+
   addNewSegment(): void {
     const newSegmentId = Math.random().toString()
+    const newSegment = new SnakeSegment(newSegmentId).get()
+
+    if (this.getNumSegments() > 0) {
+      const prevSegmentId = this.segmentIds[this.segmentIds.length - 1]
+      const prevSegment = this.segments.getObjectByName(SnakeSegment.getNameById(prevSegmentId))
+      if (!prevSegment) {
+        throw new Error(`Expected segment id ${prevSegmentId} not found!`)
+      }
+      newSegment.position.z = prevSegment.position.z + SnakeSegment.getDimensions().depth
+    }
+
     this.segmentIds.push(newSegmentId)
-    this.segments.add(new SnakeSegment(newSegmentId).get())
+    this.segments.add(newSegment)
   }
 
   static getName(): string {

@@ -2,6 +2,7 @@ import { Scene } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Snake from '../entities/Snake'
 import World from '../entities/World'
+import SnekAnimator from './SnekAnimator'
 import SnekCamera from './SnekCamera'
 import SnekLights from './SnekLights'
 import SnekRenderer from './SnekRenderer'
@@ -37,8 +38,10 @@ class SnekGame {
     const snekLights = new SnekLights()
     this.scene.add(snekLights.get())
 
+    const animator = new SnekAnimator(this.scene, this.snekScore, snake)
+
     // Start the animation
-    renderer.animate(this.scene, camera.get(), orbitor)
+    renderer.animate(this.scene, camera.get(), orbitor, animator)
   }
 }
 

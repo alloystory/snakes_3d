@@ -1,5 +1,8 @@
+import _ from 'lodash'
 import { Camera, Scene, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import SnekAnimator from './SnekAnimator'
+import SnekScore from './SnekScore'
 
 class SnekRenderer {
   private renderer: WebGLRenderer
@@ -17,9 +20,9 @@ class SnekRenderer {
     return this.renderer.domElement
   }
 
-  animate(scene: Scene, camera: Camera, orbitor: OrbitControls): void {
+  animate(scene: Scene, camera: Camera, orbitor: OrbitControls, animator: SnekAnimator): void {
     this.renderer.setAnimationLoop(() => {
-      // startAnimation(scene)
+      animator.start()
       orbitor.update()
       this.renderer.render(scene, camera)
     })
